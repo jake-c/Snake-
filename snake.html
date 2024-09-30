@@ -1,0 +1,265 @@
+<html>
+
+<style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: aliceblue; 
+    }
+
+    #you_died {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: black;
+        font-size: 24px;
+    }
+
+    #score {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        color: black;
+        font-size: 24px;
+    }
+
+    canvas {
+      border: 1px solid black; /* Optional: to see the canvas boundaries */
+    }
+  </style>
+
+<h3 id = "you_died"></h3>
+<h3 id = "score">Score &#127822: 0</h3>
+<canvas id= "gameCanvas" width="600" height="600"></canvas>
+
+<script>
+var canvas;
+var canvasContext;
+var tileSize = 30;
+var tileCount;
+var headTileX = 2;
+var headTileY = 2;
+var headX = headTileX * tileSize;
+var headY = headTileY * tileSize;
+var prevX = headX;
+var prevY = headY + 30;
+var prevY = 0;
+var tailX = 0;
+var tailX = 0;
+
+var snakeBody = []
+
+snakeBody.unshift({x: headX, y: headY})
+// snakeBody[1] = {x: prevX, y: prevY}
+let gameRunning = true;
+
+let score = 0;
+
+
+
+
+var appleX = Math.floor(Math.random() * 20) * tileSize; 
+var appleY = Math.floor(Math.random() * 20) * tileSize;
+//Math random returns a random number between 0 and 1.
+//So multiplying n by that will give you a number
+//That is between 0 and 100 percent of n. 
+
+xVelocity = 0;
+yVelocity = 0;
+//global variables
+document.addEventListener('keydown',  (event) =>  {
+
+    switch(event.key) {
+        case 'w':
+            yVelocity = -1;  //Negative because pixels on y axis are 0 at the top, and highest at the bottom! So up means subtrating pixels
+            xVelocity = 0;
+            break;
+        case 'a':
+            yVelocity = 0;
+            xVelocity = -1;
+            break;
+        case 's':
+            yVelocity = 1;
+            xVelocity = 0;
+            break;
+        case 'd':
+            yVelocity = 0;
+            xVelocity = 1;
+            break;
+        case 'r':
+            location.reload();
+            return;
+
+    }
+})
+
+window.onload = () => {
+//js code here
+// canvas.width = window.innerWidth;
+// canvas.height = window.innerHeight;
+
+canvas = document.getElementById('gameCanvas');
+
+
+message = document.getElementById('you_died');
+scoreboard = document.getElementById('score');
+//Initial apple position
+
+
+
+
+// canvas.height = window.innerHeight;
+// canvas.width = window.innerWidth;
+canvasContext = canvas.getContext('2d'); //render in 2d
+
+
+let fps = 10;
+let gameLoop = setInterval(moveEverything, 1000/fps) 
+// drawEverything();
+
+//window onload simply means that this function will run when window is done loading
+}
+
+const moveEverything = () => {
+
+
+    if (!gameRunning) return;
+    // headTileX += xVelocity; //Move the head over by 1 tile
+    // headTileY += yVelocity;
+
+
+    // headX = headTileX * tileSize;
+    // headY = headTileY * tileSize;
+    // prevX = headX;
+    // prevY = headY;
+
+    // snakeBody.push({x: prevX, y: prevY});
+    
+
+    
+    headX += xVelocity * tileSize;
+    headY += yVelocity * tileSize;
+
+    let prevHead = snakeBody[0]//remove current head, store it one segment behind
+    // snakeBody.unshift({x: headX, y: headY});
+    snakeBody[0].x = headX;
+    snakeBody[0].y = headY;
+    // snakeBody.push(prevHead)
+    // for (let i = snakeBody.length - 1; i > 1; i--) {
+    //     snakeBody[i] = snakeBody[i-1];
+    // } 
+
+    snakeBody[1] = prevHead;
+    console.log()
+    console.log(snakeBody[1])
+    
+    
+
+    //headX and headY need to change in order to move
+    //The x and y velocities currently depend on the last key pressed
+    //Move everything is called 30 times per second, so the values of headX
+    // and headY are constantly being manipulated
+
+    // if (headY == canvas.height) {
+    //     yVelocity = 0; 
+    //     console.log(canvas.height);
+    //     console.log(headY)
+    //     return;
+    // }
+
+    let snakeHitWall = (headX < 0 || headX == canvas.width || headY == canvas.height || headY < 0)
+    //hit the wall!
+    if (snakeHitWall) {
+        xVelocity = 0; //Stop the snake!! It died!
+        yVelocity = 0;
+        
+        message.innerHTML = 'You died &#128514 Press R to try again'
+        gameRunning = false; //The game isn't running anymore, so it cannot move anything anymore
+        
+
+        return;
+    }
+    // Wrap Boundary conditions
+    // if (headX > canvas.width) headX = 0;
+    // else if (headX < 0) headX = canvas.width;
+
+
+    // if (headY > canvas.height) headY = 0;
+    // else if (headY < 0) headY = canvas.height;
+    
+    let snakeAteApple = (headX == appleX && headY == appleY)
+
+    // If the snake eats the apple, move it to a random location and increment score
+    if (snakeAteApple) {
+        appleX = Math.floor(Math.random() * 20) * tileSize; 
+        appleY = Math.floor(Math.random() * 20) * tileSize;
+
+        score++; 
+
+        console.log(score)
+        scoreboard.innerHTML = `Score &#127822: ${score}`
+    }
+
+
+    //Move everything, then draw everything again
+    drawEverything();
+
+    // console.log(headX, headY)
+
+}
+
+
+const drawEverything = () => {
+
+//Re draws the whole canvas. Values ballX and ballY change, and the ball will be redrawn each time the function is called
+
+canvasContext.fillStyle = 'black'; //This is a property of canvasContext
+canvasContext.fillRect(0, 0, canvas.width, canvas.height); //makes background black
+
+makeGrid();
+//based on curent value of fillStyle
+
+canvasContext.fillStyle = 'orange';
+
+//Draw head, then the rest of the elements
+for (const segment of snakeBody) {
+    canvasContext.fillRect(segment.x, segment.y, 28, 28);
+}
+// canvasContext.fillRect(headX, headY, 28, 28);
+// canvasContext.fillRect(prevX, headY, 28, 28);
+
+
+canvasContext.fillStyle = 'red'
+
+canvasContext.fillRect(appleX, appleY, 28, 28);
+
+
+}
+
+const makeCircle = (centerX, centerY, radius) => {
+    canvasContext.beginPath();
+    canvasContext.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
+    canvasContext.fill()
+}
+
+const makeGrid = () => {
+
+    for (let row = 0; row < 20; row++) {
+
+        for (let col = 0; col < 20; col++) {
+            let x = col * tileSize;
+            let y = row * tileSize;
+            canvasContext.fillStyle = (col + row) % 2 == 0 ? '#3A5311' : '#354A21'
+            canvasContext.fillRect(x, y, 30, 30);
+            
+        }
+    }
+
+}
+</script>
+
+</html>
