@@ -53,7 +53,11 @@ var tailX = 0;
 var move = 0;
 var snakeBody = []
 
-const deathSound = new Audio('get-out.mp3')
+
+//SOUNDS
+const deathSound = new Audio('get-out.mp3');
+const eatSound = new Audio('yoshi-tongue.mp3');
+
 
 snakeBody[0] = {x: headX, y: headY}
 // snakeBody[1] = {x: prevX, y: prevY}
@@ -212,6 +216,8 @@ const moveEverything = () => {
 
         console.log(score)
         scoreboard.innerHTML = `Score &#127822: ${score}`
+
+        eatSound.play();
     }
 
 
