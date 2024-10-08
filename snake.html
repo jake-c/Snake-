@@ -50,14 +50,15 @@ var prevY = headY + 30;
 var prevY = 0;
 var tailX = 0;
 var tailX = 0;
-
+var move = 0;
 var snakeBody = []
 
-snakeBody.unshift({x: headX, y: headY})
+snakeBody[0] = {x: headX, y: headY}
 // snakeBody[1] = {x: prevX, y: prevY}
 let gameRunning = true;
 
 let score = 0;
+let snakeLength = 1;
 
 
 
@@ -126,8 +127,9 @@ let gameLoop = setInterval(moveEverything, 1000/fps)
 
 const moveEverything = () => {
 
-
-    if (!gameRunning) return;
+    move++
+    //Hits wall will trigger end of game, so nothing will be moved at all.
+    if (!gameRunning) return;  
     // headTileX += xVelocity; //Move the head over by 1 tile
     // headTileY += yVelocity;
 
@@ -144,36 +146,39 @@ const moveEverything = () => {
     headX += xVelocity * tileSize;
     headY += yVelocity * tileSize;
 
-    let prevHead = snakeBody[0]//remove current head, store it one segment behind
-    // snakeBody.unshift({x: headX, y: headY});
+    let prevSegment;
+
+    //SHIFT THE SEGMENTS TO FOLLOW THE HEAD
+
+    for (let i = snakeLength - 1; i > 0; i--) {
+
+        snakeBody[i] = {...snakeBody[i-1]}
+
+        
+    }
+
+    // snakeBody[2] = {...snakeBody[1]} //Store the values of the current head into 
+    // snakeBody[1] = {...snakeBody[0]}
+
+
     snakeBody[0].x = headX;
     snakeBody[0].y = headY;
-    // snakeBody.push(prevHead)
-    // for (let i = snakeBody.length - 1; i > 1; i--) {
-    //     snakeBody[i] = snakeBody[i-1];
-    // } 
 
-    snakeBody[1] = prevHead;
-    console.log()
-    console.log(snakeBody[1])
-    
-    
 
-    //headX and headY need to change in order to move
-    //The x and y velocities currently depend on the last key pressed
-    //Move everything is called 30 times per second, so the values of headX
-    // and headY are constantly being manipulated
 
-    // if (headY == canvas.height) {
-    //     yVelocity = 0; 
-    //     console.log(canvas.height);
-    //     console.log(headY)
-    //     return;
-    // }
+    //console.log(`In move, 0 currently is: (${snakeBody[0].x}, ${snakeBody[0].y}) and 1 currently is ${snakeBody[1].x}, ${snakeBody[1].y})`)
+
+
+    //GAME END CONDITIONS
+
+    let snakeHitSelf = false;
+    for (let i = 1; i < snakeLength; i++) {
+        if (headX == snakeBody[i].x && headY == snakeBody[i].y) snakeHitSelf = true;
+    }
 
     let snakeHitWall = (headX < 0 || headX == canvas.width || headY == canvas.height || headY < 0)
     //hit the wall!
-    if (snakeHitWall) {
+    if (snakeHitWall || snakeHitSelf) {
         xVelocity = 0; //Stop the snake!! It died!
         yVelocity = 0;
         
@@ -199,6 +204,7 @@ const moveEverything = () => {
         appleY = Math.floor(Math.random() * 20) * tileSize;
 
         score++; 
+        snakeLength++;
 
         console.log(score)
         scoreboard.innerHTML = `Score &#127822: ${score}`
@@ -220,6 +226,8 @@ const drawEverything = () => {
 canvasContext.fillStyle = 'black'; //This is a property of canvasContext
 canvasContext.fillRect(0, 0, canvas.width, canvas.height); //makes background black
 
+
+// snakeBody[1] = {x: 90, y: 90}
 makeGrid();
 //based on curent value of fillStyle
 
@@ -229,8 +237,10 @@ canvasContext.fillStyle = 'orange';
 for (const segment of snakeBody) {
     canvasContext.fillRect(segment.x, segment.y, 28, 28);
 }
-// canvasContext.fillRect(headX, headY, 28, 28);
-// canvasContext.fillRect(prevX, headY, 28, 28);
+
+//console.log(`In draw, 0 currently is: (${snakeBody[0].x}, ${snakeBody[0].y}) and 1 currently is ${snakeBody[1].x}, ${snakeBody[1].y})`)
+// canvasContext.fillRect(snakeBody[0].x, snakeBody[0].y, 28, 28);
+// canvasContext.fillRect(snakeBody[1].x, snakeBody[1].y, 28, 28);
 
 
 canvasContext.fillStyle = 'red'
