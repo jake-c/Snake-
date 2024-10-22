@@ -151,9 +151,9 @@ const moveEverything = () => {
     // headTileX += xVelocity; //Move the head over by 1 tile
     // headTileY += yVelocity;
 
-    if (directions[directions.length -1 ] == 'right' && directions[directions.length - 2] == 'left') return;
 
-    if (directions[directions.length -1 ] == 'up' && directions[directions.length - 2] == 'down') return;
+
+    console.log(directions[directions.length - 1]);
 
     // headX = headTileX * tileSize;
     // headY = headTileY * tileSize;
@@ -163,9 +163,14 @@ const moveEverything = () => {
     // snakeBody.push({x: prevX, y: prevY});
     
 
+
+
+        headX += xVelocity * tileSize;
+        headY += yVelocity * tileSize;
+
+
     
-    headX += xVelocity * tileSize;
-    headY += yVelocity * tileSize;
+
 
     let prevSegment;
 
