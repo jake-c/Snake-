@@ -51,7 +51,8 @@ var prevY = 0;
 var tailX = 0;
 var tailX = 0;
 var move = 0;
-var snakeBody = []
+var snakeBody = [];
+var directions = [];
 
 
 //SOUNDS
@@ -84,19 +85,30 @@ document.addEventListener('keydown',  (event) =>  {
         case 'w':
             yVelocity = -1;  //Negative because pixels on y axis are 0 at the top, and highest at the bottom! So up means subtrating pixels
             xVelocity = 0;
+
+            directions.push('up');
             break;
+
         case 'a':
             yVelocity = 0;
             xVelocity = -1;
+            directions.push('left');
+
             break;
+
         case 's':
             yVelocity = 1;
             xVelocity = 0;
+            directions.push('down');
+
             break;
+
         case 'd':
             yVelocity = 0;
             xVelocity = 1;
+            directions.push('right');
             break;
+
         case 'r':
             location.reload();
             return;
@@ -139,6 +151,9 @@ const moveEverything = () => {
     // headTileX += xVelocity; //Move the head over by 1 tile
     // headTileY += yVelocity;
 
+    if (positions[positions.length -1 ] == 'right' && positions[positions.length - 2] == 'left') return;
+
+    if (positions[positions.length -1 ] == 'up' && positions[positions.length - 2] == 'down') return;
 
     // headX = headTileX * tileSize;
     // headY = headTileY * tileSize;
