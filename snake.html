@@ -151,9 +151,9 @@ const moveEverything = () => {
     // headTileX += xVelocity; //Move the head over by 1 tile
     // headTileY += yVelocity;
 
-    if (positions[positions.length -1 ] == 'right' && positions[positions.length - 2] == 'left') return;
+    if (directions[directions.length -1 ] == 'right' && directions[directions.length - 2] == 'left') return;
 
-    if (positions[positions.length -1 ] == 'up' && positions[positions.length - 2] == 'down') return;
+    if (directions[directions.length -1 ] == 'up' && directions[directions.length - 2] == 'down') return;
 
     // headX = headTileX * tileSize;
     // headY = headTileY * tileSize;
