@@ -54,9 +54,10 @@ var move = 0;
 var snakeBody = [];
 var directions = [];
 
-
+//Keep track of last keyboard input to prevent reverse movement
+let prevDirection = 'p';
 //SOUNDS
-const deathSound = new Audio('get-out.mp3');
+const deathSound = new Audio('bamboo-hit-sound-effect.mp3');
 const eatSound = new Audio('yoshi-tongue.mp3');
 
 
@@ -79,40 +80,31 @@ var appleY = Math.floor(Math.random() * 20) * tileSize;
 xVelocity = 0;
 yVelocity = 0;
 //global variables
+
+//Keydown event listener for key presses
 document.addEventListener('keydown',  (event) =>  {
 
     switch(event.key) {
-        case 'w':
-            yVelocity = -1;  //Negative because pixels on y axis are 0 at the top, and highest at the bottom! So up means subtrating pixels
-            xVelocity = 0;
-
-            directions.push('up');
+        case 'w' :
+            //Only perform the logic if prevDirection is not the opposite, to prevent going backwards
+            prevDirection !== 's' ? (yVelocity = -1, xVelocity = 0, prevDirection = 'w') : null;
             break;
 
-        case 'a':
-            yVelocity = 0;
-            xVelocity = -1;
-            directions.push('left');
-
+        case 'a': 
+            prevDirection !== 'd' ? (yVelocity = 0, xVelocity = -1, prevDirection = 'a') : null;
             break;
 
-        case 's':
-            yVelocity = 1;
-            xVelocity = 0;
-            directions.push('down');
-
+        case 's': 
+            prevDirection !== 'w' ? (yVelocity = 1, xVelocity = 0, prevDirection = 's') : null;
             break;
 
-        case 'd':
-            yVelocity = 0;
-            xVelocity = 1;
-            directions.push('right');
+        case 'd': 
+            prevDirection !== 'a' ? (yVelocity = 0, xVelocity = 1, prevDirection = 'd') : null;
             break;
 
         case 'r':
             location.reload();
-            return;
-
+            break;
     }
 })
 
@@ -136,7 +128,7 @@ scoreboard = document.getElementById('score');
 canvasContext = canvas.getContext('2d'); //render in 2d
 
 
-let fps = 15;
+let fps = 13;
 let gameLoop = setInterval(moveEverything, 1000/fps) 
 // drawEverything();
 
@@ -153,7 +145,7 @@ const moveEverything = () => {
 
 
 
-    console.log(directions[directions.length - 1]);
+    console.log(prevDirection)
 
     // headX = headTileX * tileSize;
     // headY = headTileY * tileSize;
@@ -183,8 +175,7 @@ const moveEverything = () => {
         
     }
 
-    // snakeBody[2] = {...snakeBody[1]} //Store the values of the current head into 
-    // snakeBody[1] = {...snakeBody[0]}
+ 
 
 
     snakeBody[0].x = headX;
