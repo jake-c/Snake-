@@ -1,10 +1,14 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const path = require('path');
+
+const app = express();
 
 const PORT = 3000; //localhost:3000 port on local machine
 
+app.use(express.static('public')) //Send static assets in public folder once requested
+
 app.get('/', (req, res) => {
-    res.send("Hey there!")
+    res.sendFile(path.join(__dirname, 'public', 'snake.html'));
 })
 
 app.listen(PORT, () => {
