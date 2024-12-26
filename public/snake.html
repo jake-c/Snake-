@@ -27,6 +27,13 @@
         font-size: 24px;
     }
 
+    #nameForm {
+        position: absolute;
+        left: 20px;
+        top: 120px;
+        font-size: 24px;
+    }
+
     canvas {
       border: 1px solid black; /* Optional: to see the canvas boundaries */
     }
@@ -34,6 +41,11 @@
 
 <h3 id = "you_died"></h3>
 <h3 id = "score">Score &#127822: 0</h3>
+<form id="nameForm">
+    <label for="username">Name:</label>
+    <input type="text" id="username" required>
+</form>
+
 <canvas id= "gameCanvas" width="600" height="600"></canvas>
 
 <script>
@@ -53,6 +65,8 @@ var tailX = 0;
 var move = 0;
 var snakeBody = [];
 var directions = [];
+var nameEntered = false;
+var name;
 
 //Keep track of last keyboard input to prevent reverse movement
 let prevDirection = 'p';
@@ -83,6 +97,13 @@ yVelocity = 0;
 
 //Keydown event listener for key presses
 document.addEventListener('keydown',  (event) =>  {
+
+    //Prevent key controls if name hasnt been successfully entered.
+
+    // if (!nameEntered) {
+        
+    //     return;
+    // }
 
     switch(event.key) {
         case 'w' :
@@ -118,13 +139,26 @@ canvas = document.getElementById('gameCanvas');
 
 message = document.getElementById('you_died');
 scoreboard = document.getElementById('score');
-//Initial apple position
+
+//Name form handling. Only allow movement after
+
+nameForm = document.getElementById('nameForm');
+
+// nameForm.addEventListener('keydown', (event) => {
+
+//     event.preventDefault();
+//     if (event.key == 'Enter') {
+//         console.log('Enter pressed on form!');
+//         name = document.getElementById('username').textContent;
+
+//         if(name) nameEntered = true;
+//         console.log(name);
+//     }
+// })
 
 
 
 
-// canvas.height = window.innerHeight;
-// canvas.width = window.innerWidth;
 canvasContext = canvas.getContext('2d'); //render in 2d
 
 
@@ -189,12 +223,15 @@ const moveEverything = () => {
     //GAME END CONDITIONS
 
     let snakeHitSelf = false;
+    //If the snake head position ever equals the position of another segment, it hit itself!
     for (let i = 1; i < snakeLength; i++) {
         if (headX == snakeBody[i].x && headY == snakeBody[i].y) snakeHitSelf = true;
     }
 
     let snakeHitWall = (headX < 0 || headX == canvas.width || headY == canvas.height || headY < 0)
     //hit the wall!
+
+    //GAME END
     if (snakeHitWall || snakeHitSelf) {
         xVelocity = 0; //Stop the snake!! It died!
         yVelocity = 0;
@@ -204,16 +241,11 @@ const moveEverything = () => {
 
         deathSound.play();
         
+        fetch
 
         return;
     }
-    // Wrap Boundary conditions
-    // if (headX > canvas.width) headX = 0;
-    // else if (headX < 0) headX = canvas.width;
 
-
-    // if (headY > canvas.height) headY = 0;
-    // else if (headY < 0) headY = canvas.height;
     
     let snakeAteApple = (headX == appleX && headY == appleY)
 
